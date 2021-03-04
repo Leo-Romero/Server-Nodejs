@@ -1,6 +1,13 @@
 const http = require('http');       // servidor http
 const url = require('url');
-const StringDecoder = require('string_decoder').StringDecoder;     
+const StringDecoder = require('string_decoder').StringDecoder;
+
+let recursos = {
+    usuarios: [
+        {nombre: 'usuario 1'},
+        {nombre: 'usuario 2'},
+    ],
+};
 
 const server = http.createServer((req, res) => {
     // obtener url desde el objeto request
@@ -32,6 +39,10 @@ const server = http.createServer((req, res) => {
     req.on('end', () => {      // cuando el request termina (evento end), termina de recibir datos
         buffer += decoder.end(); // y cierro el decoder
 
+        if(headers["content-type"] === 'application/json') {
+            buffer = JSON.parse(buffer);
+        }
+
         // ordenar la data del request
         const data = {
             ruta: rutaLimpia,
@@ -41,11 +52,14 @@ const server = http.createServer((req, res) => {
             payload: buffer
         };
 
+        console.log({ data });
+        console.log('----------------');
+
         // elegir el manejador dependiendo de la ruta
         // y asignarle la funcion que el enrutador tiene
         let handler;
-        if(rutaLimpia && enrutador[rutaLimpia]) {   // aca handler es function
-            handler = enrutador[rutaLimpia];
+        if(rutaLimpia && enrutador[rutaLimpia] && enrutador[rutaLimpia][metodo]) {   // aca handler es function
+            handler = enrutador[rutaLimpia][metodo];
         }
         else {
             handler = enrutador.noEncontrado;       // aca no es function
@@ -55,6 +69,7 @@ const server = http.createServer((req, res) => {
         if(typeof handler === 'function') {
             handler(data, (statusCode = 200, mensaje) => {
                 const respuesta = JSON.stringify(mensaje);
+                res.setHeader("Content-Type","application/json");   //
                 res.writeHead(statusCode);
                 // linea donde realmente ya estamos respondiendo a la aplicación cliente
                 res.end(respuesta);
@@ -67,8 +82,14 @@ const enrutador = {
     ruta: (data, callback) => {
         callback(200, {mensaje: 'esta es /ruta'});
     },
-    usuarios: (data, callback) => {
-        callback(200, [{nombre: 'usuario 1'}, {nombre: 'usuario 2'}]);
+    usuarios: {
+        get: (data, callback) => {
+            callback(200, recursos.usuarios);
+        },
+        post: (data, callback) => {
+            recursos.usuarios.push(data.payload);
+            callback(201, data.payload);
+        },
     },
     noEncontrado: (data, callback) => {
         callback(404, {mensaje: 'no encontrado'});

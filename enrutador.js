@@ -26,6 +26,17 @@ module.exports = {
             }
             callback(400, {mensaje: 'indice no enviado'});
         },
+        delete: (data, callback) => {
+            if(typeof data.indice !== "undefined") {
+                if(global.recursos.usuarios[data.indice]) {
+                    global.recursos.usuarios = global.recursos.usuarios.filter(
+                        (_item, indice)=>indice != data.indice); // debe ser solo !=
+                    return callback(204, {mensaje: 'elemento eliminado'});
+                }
+                return callback(404, {mensaje: 'indice no encontrado'});
+            }
+            callback(400, {mensaje: 'indice no enviado'});
+        },
     },
     noEncontrado: (data, callback) => {
         callback(404, {mensaje: 'no encontrado'});

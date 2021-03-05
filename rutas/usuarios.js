@@ -10,8 +10,9 @@ module.exports = function usuariosHandler(usuarios) {
       callback(200, usuarios);
     },
     post: (data, callback) => {
-      usuarios.push(data.payload);
-      callback(201, data.payload);
+      let nuevoUsuario = data.payload;
+      usuarios = [...usuarios, nuevoUsuario];
+      callback(201, nuevoUsuario);
     },
     put: (data, callback) => {
       if (typeof data.indice !== "undefined") {

@@ -1,6 +1,16 @@
 module.exports = {
     usuarios: [
-        {nombre: 'usuario 1'},
-        {nombre: 'usuario 2'},
+        {   nombre: 'Juan',
+            apellido: 'Fernandez',
+            edad: 21
+        },
+        {   nombre: 'Paola',
+            apellido: 'Chavez',
+            edad: 25
+        },
+        {   nombre: 'Ricardo',
+            apellido: 'Alvarez',
+            edad: 30
+        },
     ],
 };

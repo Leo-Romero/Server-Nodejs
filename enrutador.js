@@ -8,13 +8,23 @@ module.exports = {
                 if(global.recursos.usuarios[data.indice]) {
                     return callback(200, global.recursos.usuarios[data.indice]);
                 }
-                return callback(404, {mensaje: 'no encontrado'});
+                return callback(404, {mensaje: 'indice no encontrado'});
             }
             callback(200, global.recursos.usuarios);
         },
         post: (data, callback) => {
             global.recursos.usuarios.push(data.payload);
             callback(201, data.payload);
+        },
+        put: (data, callback) => {
+            if(typeof data.indice !== "undefined") {
+                if(global.recursos.usuarios[data.indice]) {
+                    global.recursos.usuarios[data.indice] = data.payload;
+                    return callback(200, global.recursos.usuarios[data.indice]);
+                }
+                return callback(404, {mensaje: 'indice no encontrado'});
+            }
+            callback(400, {mensaje: 'indice no enviado'});
         },
     },
     noEncontrado: (data, callback) => {

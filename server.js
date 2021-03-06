@@ -1,5 +1,5 @@
 const http = require('http');       // servidor http
-const requestHandler = require('./request-andler');
+const requestHandler = require('./request-handler');
 const server = http.createServer(requestHandler)
 
 server.listen(5000,() => {
